@@ -30,7 +30,6 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         echo "building release ${RELEASE_VERSION}"
-        echo "__version__ = \'${RELEASE_VERSION}\'" > techmo/_version.py
-        cat techmo/_version.py
+        echo "__version__ = '${RELEASE_VERSION}'" > techmo/_version.py
         python setup.py sdist bdist_wheel
         twine upload --repository testpypi dist/*
