@@ -9,7 +9,7 @@ project_root = Path(__file__).parent
 install_requires = (project_root / 'requirements.txt').read_text().splitlines()
 
 setup(name='Techmo Extracting Features Project',
-      version='0.1',
+      version='0.1.0',
       python_requires='>=3.5.0',
       author='Mariusz Ziółko, Michal Kucharski',
       author_email="mariusz.ziolko@techmo.pl",
