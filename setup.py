@@ -7,11 +7,12 @@ from setuptools import find_packages, setup
 project_root = Path(__file__).parent
 
 install_requires = (project_root / 'requirements.txt').read_text().splitlines()
-
-setup(name='Techmo Extracting Features Project',
-      version='0.1.0',
+exec(open('techmo/_version.py').read())
+setup(name='techmo',
+      version=__version__,
       python_requires='>=3.5.0',
-      author='Mariusz Ziółko, Michal Kucharski',
+      url='https://github.com/mikuchar/techmo',
+      author='Mariusz Ziółko, Michał Kucharski',
       author_email="mariusz.ziolko@techmo.pl",
       install_requires=install_requires,
       long_description=(project_root / 'README.md').read_text(),
