@@ -1,62 +1,64 @@
 #!/usr/bin/env python3
 
+
 """
-feature_extraction.py: Extracts features based on on fft and wavelet transform
+The code implements an algorithm consisting of the following stages:
+1.Speech segment is processed by the Hann window,
+2.Analyzed segment is normalized,
+3.Speech segment is processed by the wavelet transform,
+4.Each subband is subjected to the Fast Fourier Transform,
+5.Triangular filtration,
+6.Logarithm of filter outputs.
+
+A detailed presentation of the algorithm is presented in the paper
+M.Ziołko, M.Kucharski, S.Pałka, B.Ziołko, K.Kaminski, I.Kowalska, A.Szpakowicz, J.Jamiołkowski, M.Chlabicz, M.Witkowski:
+Fourier-Wavelet Voice Analysis Applied to Medical Screening Tests.
+Proceedings of the INTERSPEECH 2021 (under review).
 """
 
 __author__ = "Mariusz Źiółko, Michal Kucharski"
 __email__ = "mariusz.ziolko@techmo.pl, michal.kucharski@techmo.pl"
-__all__ = ['calculate_fft_wavelet', 'calculate_wavelet_fft']
+__all__ = ['calculate_wavelet_fft']
 
-import numpy as np
 import pywt
+import numpy as np
 import soundfile as sf
+from scipy.signal import get_window
 
 
-def apply_triangles(sig_freq_domain, triangle_no=20, sample_bucket_no=20):
-    """
-    Filtering method developed by prof. M. Źiółko
-    It Applies :param `triangle_no` triangle filters to signal after fft
-    :param sig_freq_domain: numpy vector representing signal after fft
-    :param triangle_no: number of triangles, default 20
-    :param sample_bucket_no: number of samples per each half of the triangle
-    :return params: numpy array with length of :param `triangle_no`
-    """
-    sig_len = sig_freq_domain.shape[0]
-    samples_per_half_triangle = sig_len // sample_bucket_no
-    params = np.zeros((triangle_no,))
-    for triangle_index in range(0, triangle_no - 2):
-        for sample_index in range(0, samples_per_half_triangle + 1):
-            sig_index = (triangle_index + 1) * samples_per_half_triangle + sample_index
-            params[triangle_index + 1] += sample_index * sig_freq_domain[sig_index] ** 2 / samples_per_half_triangle
-            params[triangle_index] += (1 - sample_index / samples_per_half_triangle) * sig_freq_domain[sig_index] ** 2
-
-    # Logic for triangles on the edges
-    for sample_index in range(0, samples_per_half_triangle + 1):
-        params[0] += sample_index * sig_freq_domain[sample_index] ** 2 / samples_per_half_triangle
-        sig_index = (triangle_no - 1) * samples_per_half_triangle + sample_index - 1
-        params[triangle_no - 1] += (1 - sample_index / samples_per_half_triangle) * sig_freq_domain[sig_index] ** 2
-
-    return np.log(params / (samples_per_half_triangle + 1))
+def normalize_signal(sig):
+    sig = sig / np.max(np.abs(sig))
+    return sig
 
 
-def fft(normalized_signal):
-    ft = np.fft.fft(normalized_signal)
-    fft_len = ft.shape[0]
-    mft = np.abs(ft[:fft_len // 2])
+def decomposition_number(sig):
+    length = len(sig)
+    if length >= 384:
+        return 5
+    if length >= 224:
+        return 4
+    if length >= 136:
+        return 3
+    if length >= 88:
+        return 2
+    if length >= 64:
+        return 1
+    raise ValueError("Segment is too short")
+
+
+def wavelet_decomposition(signal, level):
+    w_transform = pywt.wavedec(signal, 'dmey', level=5)
+    return w_transform
+
+
+def fourier_analysis(wavelet_decomp, decomp):
+    mft = []
+    for m in range(0, decomp):
+        ft = np.fft.fft(wavelet_decomp[m])
+        N = ft.shape[0]
+        spe = np.abs(ft[:N // 2])
+        mft.append(spe)
     return mft
-
-
-def normalize_signal_by_energy(sig):
-    return sig / np.sqrt(np.power(sig, 2).sum())
-
-
-def enforce_sample_float_type(signal):
-    numpy_arr_signal = np.array(signal)
-    if numpy_arr_signal.dtype == np.int16:
-        numpy_arr_signal = convert_integer_to_float(numpy_arr_signal)
-    assert numpy_arr_signal.dtype == np.float
-    return numpy_arr_signal
 
 
 def convert_integer_to_float(signal):
@@ -65,17 +67,57 @@ def convert_integer_to_float(signal):
     return signal / int_to_float_divider
 
 
-def calculate_fft_wavelet(wav_path, type='dmey', level=5):
-    signal, fs = sf.read(wav_path)
-    numpy_arr_signal = enforce_sample_float_type(signal)
-    normalized_signal = normalize_signal_by_energy(numpy_arr_signal)
-    mft = fft(normalized_signal)
-    return np.stack([apply_triangles(coef) for coef in pywt.wavedec(mft, type, level=level)], axis=0)
+def enforce_sample_float_type(signal):
+    numpy_arr_signal = np.array(signal)
+    if numpy_arr_signal.dtype == np.int16:
+        numpy_arr_signal = convert_integer_to_float(numpy_arr_signal)
+    assert numpy_arr_signal.dtype == float
+    return numpy_arr_signal
 
 
-def calculate_wavelet_fft(wav_path, type='dmey', level=5):
+def apply_filters(spectra, decomp=5):
+    """
+    Filtering method developed by Techmo Poland.
+    It Applies
+    :tuple 'spectra' presents FFT spectra computed for wavelet subbands,
+    :scalar 'decomp' is equal to numer of wavelet decompositions, default 5,
+    :vector 'size' presents numbers of samples for individual subbands,
+    :vector 'features' includes 60 features of analysed speech segment,
+    :vector 'amplitude' consits of amplitude spectra successively used for each subband,
+    :vector 'numb_sampls[m]' shows the numbers of filter inputs[m] = "2*numb_sampls[m]+1".
+    """
+    no_subbands = decomp + 1
+    size = np.zeros(no_subbands, dtype=int)
+    numb_sampls = np.zeros(no_subbands, dtype=int)
+    features = np.zeros(60, dtype=float)
+    for m in range(0, no_subbands):
+        size[m] = spectra[m].shape[0]
+        numb_sampls[m] = (size[m] * no_subbands - 2 * (decomp + 31)) / (decomp + 61)
+        amplitude = spectra[m]
+        for triang in range(0, 60 // no_subbands):
+            feature_index = triang + m * 60 // no_subbands
+            normalization_term = (numb_sampls[m] + 3)
+            for sampl in range(0, numb_sampls[m]):
+                features[feature_index] += (sampl + 1) * amplitude[triang * (numb_sampls[m] + 1) + sampl + 1] * 2 ** (
+                        decomp - m - 1) / normalization_term
+                features[feature_index] += (2 + numb_sampls[m] - sampl) / (1 + numb_sampls[m]) * amplitude[
+                    triang * (numb_sampls[m] + 1) + 4 + sampl] * 2 ** (decomp - m - 1) / normalization_term
+            features[feature_index] += amplitude[(numb_sampls[m] + 1) * (triang + 1)] * 2 ** (
+                    decomp - m - 1) / normalization_term
+    for triang in range(0, 60 // no_subbands):
+        features[triang] = features[triang] / 2
+    return features
+
+
+def calculate_wavelet_fft(wav_path):
     signal, fs = sf.read(wav_path)
     numpy_arr_signal = enforce_sample_float_type(signal)
-    normalized_signal = normalize_signal_by_energy(numpy_arr_signal)
-    coefs = reversed(list(pywt.wavedec(normalized_signal, type, level=level)))
-    return np.stack([apply_triangles(fft(coef)) for coef in coefs], axis=0)
+    normalized_signal = normalize_signal(numpy_arr_signal)
+    sig_size = normalized_signal.shape[0]
+    window = get_window("hann", sig_size, fftbins=True)
+    windowed_signal = normalized_signal * window
+    decomp = decomposition_number(windowed_signal)
+    w_transform = wavelet_decomposition(windowed_signal, decomp)
+    spectra = fourier_analysis(w_transform, decomp + 1)
+    filter_out = apply_filters(spectra, decomp)
+    return np.log10(filter_out)
