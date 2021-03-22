@@ -1,7 +1,7 @@
 [![pypi](https://img.shields.io/pypi/v/techmo.svg)](https://test.pypi.org/pypi/techmo)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/techmo.svg)](https://test.pypi.org/pypi/techmo)
 ![example workflow](https://github.com/mikuchar/techmo/actions/workflows/python-publish.yml/badge.svg)
-## [Techmo Sp. z o.o.](http://techmp.pl) feature extraction module
+## [Techmo Sp. z o.o.](http://techmp.pl) module for audio features extraction
 
 ### How to use
 ```

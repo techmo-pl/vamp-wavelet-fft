@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 """
 The code implements an algorithm consisting of the following stages:
 1.Speech segment is processed by the Hann window,
@@ -47,7 +46,7 @@ def decomposition_number(sig):
 
 
 def wavelet_decomposition(signal, level):
-    w_transform = pywt.wavedec(signal, 'dmey', level=5)
+    w_transform = pywt.wavedec(signal, 'dmey', level=level)
     return w_transform
 
 
@@ -75,7 +74,7 @@ def enforce_sample_float_type(signal):
     return numpy_arr_signal
 
 
-def apply_filters(spectra, decomp=5):
+def apply_filters(spectra, decomp):
     """
     Filtering method developed by Techmo Poland.
     It Applies
@@ -111,12 +110,11 @@ def apply_filters(spectra, decomp=5):
 
 def calculate_wavelet_fft(wav_path):
     signal, fs = sf.read(wav_path)
-    numpy_arr_signal = enforce_sample_float_type(signal)
-    normalized_signal = normalize_signal(numpy_arr_signal)
-    sig_size = normalized_signal.shape[0]
+    sig_size = signal.shape[0]
     window = get_window("hann", sig_size, fftbins=True)
-    windowed_signal = normalized_signal * window
-    decomp = decomposition_number(windowed_signal)
+    windowed_signal = signal * window
+    normalized_signal = normalize_signal(windowed_signal)
+    decomp = decomposition_number(normalized_signal)
     w_transform = wavelet_decomposition(windowed_signal, decomp)
     spectra = fourier_analysis(w_transform, decomp + 1)
     filter_out = apply_filters(spectra, decomp)
