@@ -18,7 +18,7 @@ setup(name='techmo',
       long_description_content_type='text/markdown',
       python_requires='>=3.5.0',
       classifiers=[
-          'Programming Language :: Python :: 3 :: Only'
+          'Programming Language :: Python :: 3 :: Only',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: 3.7',
