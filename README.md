@@ -1,5 +1,5 @@
-[![pypi](https://img.shields.io/pypi/v/techmo.svg)](https://pypi.org/pypi/techmo)
-[![Supported Python versions](https://img.shields.io/pypi/pyversions/techmo.svg)](https://pypi.org/pypi/techmo)
+[![pypi](https://img.shields.io/pypi/v/techmo-wavelet.svg)](https://pypi.org/pypi/techmo-wavelet)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/techmo-wavelet.svg)](https://pypi.org/pypi/techmo-wavelet)
 ![example workflow](https://github.com/mikuchar/techmo/actions/workflows/python-publish.yml/badge.svg)
 ## [Techmo Sp. z o.o.](http://techmo.pl) module for audio features extraction
 

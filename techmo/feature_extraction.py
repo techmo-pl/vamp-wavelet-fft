@@ -60,20 +60,6 @@ def fourier_analysis(wavelet_decomp, decomp):
     return mft
 
 
-def convert_integer_to_float(signal):
-    assert signal.dtype == np.int16
-    int_to_float_divider = np.abs(np.iinfo(np.int16).min)
-    return signal / int_to_float_divider
-
-
-def enforce_sample_float_type(signal):
-    numpy_arr_signal = np.array(signal)
-    if numpy_arr_signal.dtype == np.int16:
-        numpy_arr_signal = convert_integer_to_float(numpy_arr_signal)
-    assert numpy_arr_signal.dtype == float
-    return numpy_arr_signal
-
-
 def apply_filters(spectra, decomp):
     """
     Filtering method developed by Techmo Poland.

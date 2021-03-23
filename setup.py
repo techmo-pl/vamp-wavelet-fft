@@ -7,7 +7,7 @@ project_root = Path(__file__).parent
 install_requires = (project_root / 'requirements.txt').read_text().splitlines()
 exec(open('techmo/_version.py').read())
 
-setup(name='techmo',
+setup(name='techmo-wavelet',
       version=__version__,
       url='https://github.com/mikuchar/techmo',
       author='Mariusz Ziółko, Michał Kucharski',
