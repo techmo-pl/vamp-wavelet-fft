@@ -5,7 +5,7 @@
 
 ### How to use
 ```
-pip install techmo
+pip install techmo-wavelet
 
 from techmo.feature_extraction import calculate_wavelet_fft
 
