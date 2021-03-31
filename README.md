@@ -4,7 +4,7 @@
 ## [Techmo Sp. z o.o.](http://techmo.pl) module for audio features extraction
 
 ### How to use
-:warning: Add `!` character if you install the module in jupyter notebook
+:warning: Add `!` character if you install the module in a jupyter notebook
 ```
 pip install techmo-wavelet 
 
