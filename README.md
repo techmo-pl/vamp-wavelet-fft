@@ -9,6 +9,7 @@
 pip install techmo-wavelet 
 
 from techmo.feature_extraction import calculate_wavelet_fft
+import numpy as np
 
 # signal must be 1d array read from wav file, e.x by using Soundfile . Here we generate random signal
 signal = np.random.uniform(-1.0, 1.0, 16000)
