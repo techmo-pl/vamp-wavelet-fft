@@ -9,7 +9,7 @@ exec(open('techmo/_version.py').read())
 
 setup(name='techmo-wavelet',
       version=__version__,
-      url='https://github.com/mikuchar/techmo',
+      url='https://github.com/techmo-pl/vamp-wavelet-fft',
       author='Mariusz Ziółko, Michał Kucharski',
       author_email='mariusz.ziolko@techmo.pl',
       description='A module for audio features extraction from Techmo',
