@@ -1,3 +1,2 @@
 scipy
-SoundFile>=0.10
 PyWavelets>=1.0.3

@@ -1,15 +1,19 @@
 [![pypi](https://img.shields.io/pypi/v/techmo-wavelet.svg)](https://pypi.org/pypi/techmo-wavelet)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/techmo-wavelet.svg)](https://pypi.org/pypi/techmo-wavelet)
-![example workflow](https://github.com/mikuchar/techmo/actions/workflows/python-publish.yml/badge.svg)
+![example workflow](https://github.com/techmo-pl/vamp-wavelet-fft/actions/workflows/python-publish.yml/badge.svg)
 ## [Techmo Sp. z o.o.](http://techmo.pl) module for audio features extraction
 
 ### How to use
+:warning: Add `!` character if you install the module in jupyter notebook
 ```
-pip install techmo-wavelet
+pip install techmo-wavelet 
 
 from techmo.feature_extraction import calculate_wavelet_fft
 
-features = calculate_wavelet_fft("path/to/audio_file")
+# signal must be 1d array read from wav file, e.x by using Soundfile . Here we generate random signal
+signal = np.random.uniform(-1.0, 1.0, 16000)
+
+features = calculate_wavelet_fft(signal)
 ```
 
 
@@ -17,9 +21,10 @@ features = calculate_wavelet_fft("path/to/audio_file")
 1. Speech segment is processed by the Hann window,
 2. The analyzed segment is normalized,
 3. Speech segment is processed by the wavlet transform,
-4. Each sub band is subjected to the Fast Fourier Transform,
+4. Each subband is subjected to the Fast Fourier Transform,
 5. Triangular filtration,
 6. Logarithm of filter outputs.
+7. A feature vector of length 60 is returned
 
 A detailed presentation of the algorithm is presented in the paper
 M.Ziołko, M.Kucharski, S.Pałka, B.Ziołko, K.Kaminski, I.Kowalska, A.Szpakowicz, J.Jamiołkowski, M.Chlabicz, M.Witkowski:
