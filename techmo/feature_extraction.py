@@ -32,15 +32,15 @@ def _normalize_signal(sig):
 
 def _decomposition_number(sig):
     length = len(sig)
-    if length >= 384:
+    if length >= 2048:
         return 5
-    if length >= 224:
+    if length >= 1008:
         return 4
-    if length >= 136:
+    if length >= 528:
         return 3
-    if length >= 88:
+    if length >= 288:
         return 2
-    if length >= 64:
+    if length >= 128:
         return 1
     raise ValueError("Segment is too short")
 
