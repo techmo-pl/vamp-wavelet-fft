@@ -19,14 +19,42 @@ features = calculate_wavelet_fft(signal)
 ```
 
 
-### The code implements an algorithm consisting of the following stages:
-1. Speech segment is processed by the Hann window,
-2. The analyzed segment is normalized,
-3. Speech segment is processed by the wavlet transform,
-4. Each subband is subjected to the Fast Fourier Transform,
-5. Triangular filtration,
-6. Logarithm of filter outputs.
-7. A feature vector of length 60 is returned
+### The code implements 2 functions to extract features:
+
+The `calculate_wavelet_fft` function implements an algorithm consisting of the following stages:
+
+1. If the number of samples N is greater than or equal to 4800,
+   the signal is divided into int(N/2400) segments to compute finally 60
+   features for each segment containing int(N/int(N/2400)) samples,
+   i.e. the feature vector will have 60*int(N/2400) elements,
+2. Segments are processed by the Hann window,
+3. Segments are normalized separately,
+4. Each segment is processed by the Wavelet Transform (WT),
+5. Each WT subband is subjected to the Fast Fourier Transform (FFT),
+6. FFT spectra are inputs of the triangular filtration to obtain
+  the feature sub-vectors of length 60 for each segment,
+7. The logarithms of filter outputs are computed to obtain
+   the feature sub-vectors of length 60 for each segment.
+8. Sub-vectors are concatenated to obtain a final feature matrix as numpy ndarray
+   of shape int(N/2400), 60.
+
+
+The `calculate_fft_wavelet` function implements an algorithm consisting of the following stages:
+
+1. If the number of samples N is greater than or equal to 9600,
+   the signal is divided into int(N/4800) segments to compute finally 60
+   features for each segment containing int(N/int(N/4800)) samples,
+   i.e. the feature vector will have 60*int(N/4800) elements,
+2. Segments are processed by the Hann window,
+3. Segments are normalized separately,
+4. Speech segments are processed by the the Fast Fourier Transform,
+5. The complex spectra are subjected to Wavelet Transform (WT),
+6. Absolute values of WT are calculated,
+7. The computed modules are inputs of the triangular filtration,
+8. The logarithms of filter outputs are computed to obtain
+   the feature sub-vectors of length 60 for each segment.
+9. Sub-vectors are concatenated to obtain a final feature matrix
+   as numpy ndarray of shape int(N/4800), 60.
 
 A detailed presentation of the algorithm is presented in the paper
 M.Ziołko, M.Kucharski, S.Pałka, B.Ziołko, K.Kaminski, I.Kowalska, A.Szpakowicz, J.Jamiołkowski, M.Chlabicz, M.Witkowski:
