@@ -8,14 +8,21 @@
 ```
 pip install techmo-wavelet 
 
-from techmo.feature_extraction import calculate_wavelet_fft
+#import functions for feature extraction
+from techmo.feature_extraction import calculate_wavelet_fft, calculate_fft_wavelet
+
 # install numpy first in case is not installed in your environment
 import numpy as np 
 
 # signal must be 1d array read from wav file, e.x by using Soundfile. Here we generate random signal
 signal = np.random.uniform(-1.0, 1.0, 16000)
 
+# Here's an example of how to use `calculate_wavelet_fft` function
 features = calculate_wavelet_fft(signal)
+
+# Here's an example of how to use `calculate_fft_wavelet` function
+features = calculate_fft_wavelet(signal)
+
 ```
 
 
