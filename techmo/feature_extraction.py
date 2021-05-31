@@ -204,9 +204,3 @@ def calculate_fft_wavelet(signal):
         features = np.log10(filter_out)
         final_features.append(features)
     return np.stack(final_features)
-
-
-signal = np.random.uniform(-1.0, 1.0, 10000)
-
-features = calculate_fft_wavelet(signal)
-print(features.shape)
