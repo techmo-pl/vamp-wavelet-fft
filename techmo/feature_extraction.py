@@ -17,13 +17,6 @@ The `calculate_wavelet_fft` function implements an algorithm consisting of the f
 8. Sub-vectors are concatenated to obtain a final feature matrix as numpy ndarray
   of shape int(N/2400), 60.
 
-A detailed presentation of the algorithm is presented in the paper
-
-M.Ziółko, M.Kucharski, S.Pałka, B.Ziółko, K.Kamiński, I.Kowalska,
-A.Szpakowicz, J.Jamiołkowski, M.Chlabicz, M.Witkowski:
-Fourier-Wavelet Voice Analysis Applied to Medical Screening Tests.
-Proceedings of the INTERSPEECH 2021 (under review).
-
 The `calculate_fft_wavelet` function implements an algorithm consisting of the following stages:
 
 1. If the number of samples N is greater than or equal to 9600,

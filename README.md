@@ -62,8 +62,3 @@ The `calculate_fft_wavelet` function implements an algorithm consisting of the f
    the feature sub-vectors of length 60 for each segment.
 9. Sub-vectors are concatenated to obtain a final feature matrix
    as numpy ndarray of shape int(N/4800), 60.
-
-A detailed presentation of the algorithm is presented in the paper
-M.Ziołko, M.Kucharski, S.Pałka, B.Ziołko, K.Kaminski, I.Kowalska, A.Szpakowicz, J.Jamiołkowski, M.Chlabicz, M.Witkowski:
-Fourier-Wavelet Voice Analysis Applied to Medical Screening Tests.
-Proceedings of the INTERSPEECH 2021 (under review).
